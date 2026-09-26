@@ -37,4 +37,8 @@ public class DatabaseManager {
             System.out.println("Database created.");
         }
     }
+
+    public Connection getConnection() throws SQLException {
+        return DriverManager.getConnection(URL);
+    }
 }
