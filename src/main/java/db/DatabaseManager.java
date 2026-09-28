@@ -1,5 +1,7 @@
 package db;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -12,10 +14,16 @@ public class DatabaseManager {
 
     public DatabaseManager(Path dbPath) {
         this.dbPath = dbPath.toAbsolutePath();
-        this.URL = "jdbc:sqlite:portfolio.db" + this.dbPath;
+        this.URL = "jdbc:sqlite:" + this.dbPath;
     }
 
-    public void initializeDatabase() {
+    public static Path deafultPath() {
+        return Path.of(System.getProperty("user.home"), ".portfolio", "portfolio.db");
+    }
+
+    public void initializeDatabase() throws IOException, SQLException {
+        Files.createDirectories(dbPath.getParent());
+
         try(Connection conn = DriverManager.getConnection(URL);
             Statement stmt = conn.createStatement()) {
 
@@ -27,8 +35,6 @@ public class DatabaseManager {
 
             stmt.execute(sql);
             System.out.println("Database created.");
-        } catch(SQLException e) {
-            System.out.println("Error: " + e.getMessage());
         }
     }
 }
