@@ -10,21 +10,21 @@ import java.sql.Statement;
 
 public class DatabaseManager {
     private final Path dbPath;
-    private final String URL;
+    private final String url;
 
     public DatabaseManager(Path dbPath) {
         this.dbPath = dbPath.toAbsolutePath();
-        this.URL = "jdbc:sqlite:" + this.dbPath;
+        this.url = "jdbc:sqlite:" + this.dbPath;
     }
 
-    public static Path deafultPath() {
+    public static Path defaultPath() {
         return Path.of(System.getProperty("user.home"), ".portfolio", "portfolio.db");
     }
 
     public void initializeDatabase() throws IOException, SQLException {
         Files.createDirectories(dbPath.getParent());
 
-        try(Connection conn = DriverManager.getConnection(URL);
+        try(Connection conn = DriverManager.getConnection(url);
             Statement stmt = conn.createStatement()) {
 
             String sql = "CREATE TABLE IF NOT EXISTS transactions (" +
@@ -34,11 +34,10 @@ public class DatabaseManager {
                     "price TEXT NOT NULL);";
 
             stmt.execute(sql);
-            System.out.println("Database created.");
         }
     }
 
     public Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(URL);
+        return DriverManager.getConnection(url);
     }
 }
