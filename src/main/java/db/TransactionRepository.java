@@ -2,7 +2,10 @@ package db;
 
 import model.Transaction;
 
+import java.math.BigDecimal;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TransactionRepository {
     private final DatabaseManager db;
@@ -29,6 +32,26 @@ public class TransactionRepository {
                 }
                 throw new SQLException("Failed to read new transaction id");
             }
+        }
+    }
+
+    public List<Transaction> findAll() throws SQLException {
+        String sql = "SELECT * FROM transactions";
+        List<Transaction> transactions = new ArrayList<>();
+
+        try(Connection conn = db.getConnection();
+            Statement stmt = conn.createStatement()) {
+
+            ResultSet rs = stmt.executeQuery(sql);
+            while(rs.next()) {
+                transactions.add(new Transaction(
+                        rs.getLong(1),
+                        rs.getString(2),
+                        rs.getInt(3),
+                        new BigDecimal(rs.getString(4))
+                ));
+            }
+            return transactions;
         }
     }
 }
