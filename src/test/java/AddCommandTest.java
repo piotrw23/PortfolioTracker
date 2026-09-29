@@ -54,16 +54,12 @@ public class AddCommandTest {
     }
 
     @Test
-    public void savesTickerUpperCase() {
+    public void savesTickerInUpperCase() throws SQLException {
         int exitCode = cli.execute("aapl", "2", "150.67");
         assertEquals(0, exitCode);
-        try {
-            List<Transaction> transactions = repo.findAll();
-            String ticker = transactions.get(0).ticker();
-            assertEquals("AAPL", ticker);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            assertEquals(1, 0);
-        }
+
+        List<Transaction> transactions = repo.findAll();
+        assertEquals(1, transactions.size());
+        assertEquals("AAPL", transactions.get(0).ticker());
     }
 }
