@@ -54,4 +54,25 @@ public class TransactionRepository {
             return transactions;
         }
     }
+
+    public List<Transaction> findByTicker(String ticker) throws SQLException {
+        String sql = "SELECT * FROM transactions WHERE ticker = ?";
+        List<Transaction> transactions = new ArrayList<>();
+
+        try(Connection conn = db.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, ticker);
+            ResultSet rs = stmt.executeQuery();
+            while(rs.next()) {
+                transactions.add(new Transaction(
+                        rs.getLong(1),
+                        rs.getString(2),
+                        rs.getInt(3),
+                        new BigDecimal(rs.getString(4))
+                ));
+            }
+            return transactions;
+        }
+    }
 }
