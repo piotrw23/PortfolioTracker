@@ -1,13 +1,10 @@
 package command;
 
 import db.TransactionRepository;
-import print.PrintTable;
 import model.Transaction;
-import picocli.CommandLine;
 import picocli.CommandLine.Command;
+import print.PrintTransactionsTable;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -30,7 +27,10 @@ public class ListCommand implements Callable<Integer> {
             System.out.println("No transactions found");
         }
 
-        PrintTable.printTable(transactions);
+        PrintTransactionsTable table = new PrintTransactionsTable(new String[]{"ID", "Ticker", "Shares", "Price", "Value"},
+                                        transactions);
+
+        table.printTable();
 
         return 0;
     }
