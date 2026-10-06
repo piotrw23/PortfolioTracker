@@ -29,7 +29,7 @@ public record Position(String ticker, List<Transaction> transactions) {
     public BigDecimal getAvgPrice() {
         int totalShares = getTotalShares();
         if (totalShares == 0) {
-            throw new IllegalStateException("Brak akcji w pozycji, nie można obliczyć średniej ceny");
+            throw new IllegalStateException("No shares in position. Unable to compute average price");
         }
         return getTotalCost().divide(BigDecimal.valueOf(totalShares), 2, RoundingMode.HALF_UP);
     }
@@ -37,5 +37,10 @@ public record Position(String ticker, List<Transaction> transactions) {
     public BigDecimal getProfit(BigDecimal currentPrice) {
         BigDecimal currentValue = currentPrice.multiply(BigDecimal.valueOf(getTotalShares()));
         return currentValue.subtract(getTotalCost());
+    }
+
+    public BigDecimal getPercentageProfit(BigDecimal currentPrice) {
+        return getProfit(currentPrice).divide(getTotalCost(),
+                2, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100));
     }
 }
