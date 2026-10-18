@@ -40,7 +40,12 @@ public record Position(String ticker, List<Transaction> transactions) {
     }
 
     public BigDecimal getPercentageProfit(BigDecimal currentPrice) {
-        return getProfit(currentPrice).divide(getTotalCost(),
-                2, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100));
+        BigDecimal totalCost = getTotalCost();
+        if (totalCost.signum() == 0) {
+            throw new IllegalStateException("No cost in position. Unable to compute percentage profit");
+        }
+        return getProfit(currentPrice)
+                .multiply(BigDecimal.valueOf(100))
+                .divide(totalCost, 2, RoundingMode.HALF_UP);
     }
 }
