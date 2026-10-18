@@ -37,7 +37,7 @@ public class StatusCommand implements Callable<Integer> {
         List<Transaction> tickerTransactions = repo.findByTicker(ticker);
 
         Position position = new Position(ticker, tickerTransactions);
-        BigDecimal currentPrice = new FakePriceProvider(ticker).getPrice();
+        BigDecimal currentPrice = new FakePriceProvider().getPrice(ticker);
 
         PrintPositionStats positionStats = new PrintPositionStats(
                 new String[] {"Ticker", "Total shares", "Avg cost", "Current price", "Total profit", "Percent"},
