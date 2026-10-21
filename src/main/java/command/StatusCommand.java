@@ -14,6 +14,7 @@ import print.PrintPositionStats;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.Callable;
 
 @Command(
@@ -37,10 +38,16 @@ public class StatusCommand implements Callable<Integer> {
 
     @Override
     public Integer call() throws SQLException {
-        List<Transaction> tickerTransactions = repo.findByTicker(ticker);
+        String normalizedTicker = ticker.toUpperCase(Locale.ROOT);
 
-        Position position = new Position(ticker, tickerTransactions);
-        BigDecimal currentPrice = priceProvider.getPrice(ticker);
+        List<Transaction> tickerTransactions = repo.findByTicker(normalizedTicker);
+        if (tickerTransactions.isEmpty()) {
+            System.err.println("No transactions found for " + normalizedTicker);
+            return 1;
+        }
+
+        Position position = new Position(normalizedTicker, tickerTransactions);
+        BigDecimal currentPrice = priceProvider.getPrice(normalizedTicker);
 
         PrintPositionStats positionStats = new PrintPositionStats(
                 new String[] {"Ticker", "Total shares", "Avg cost", "Current price", "Total profit", "Percent"},
