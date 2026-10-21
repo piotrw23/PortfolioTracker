@@ -8,6 +8,7 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Parameters;
 import picocli.CommandLine;
 import price.FakePriceProvider;
+import price.PriceProvider;
 import print.PrintPositionStats;
 
 import java.math.BigDecimal;
@@ -20,10 +21,12 @@ import java.util.concurrent.Callable;
         description = "Reading ticker and printing total profit/loss from transactions involving given ticker"
 )
 public class StatusCommand implements Callable<Integer> {
-    TransactionRepository repo;
+    private final TransactionRepository repo;
+    private final PriceProvider priceProvider;
 
-    public StatusCommand(TransactionRepository repo) {
+    public StatusCommand(TransactionRepository repo,  PriceProvider priceProvider) {
         this.repo = repo;
+        this.priceProvider = priceProvider;
     }
 
     @Spec
@@ -37,7 +40,7 @@ public class StatusCommand implements Callable<Integer> {
         List<Transaction> tickerTransactions = repo.findByTicker(ticker);
 
         Position position = new Position(ticker, tickerTransactions);
-        BigDecimal currentPrice = new FakePriceProvider().getPrice(ticker);
+        BigDecimal currentPrice = priceProvider.getPrice(ticker);
 
         PrintPositionStats positionStats = new PrintPositionStats(
                 new String[] {"Ticker", "Total shares", "Avg cost", "Current price", "Total profit", "Percent"},
